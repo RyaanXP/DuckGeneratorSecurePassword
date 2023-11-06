@@ -1,19 +1,171 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Generatore di Password Sicure</title>
+    <meta charset="UTF-8">
+    <title>Canvas Honeycomb</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
-    <div class="container">
-        <h1>Generatore di Password Sicure</h1>
-        <label for="numPasswords">Inserisci il numero di password da generare:</label>
-        <input type="number" id="numPasswords" min="1" required>
-        <br>
-        <button id="generateButton">Genera Password</button>
-        <div id="passwordOutput"></div>
+    <div id="canvas-container">
+        <canvas id="myCanvas"></canvas>
     </div>
-    <div id="stars-bg"></div>
-    <script src="script.js"></script>
+    <div id="password-container">
+        <div id="password-controls">
+            <input type="number" id="numPasswords" min="1" placeholder=" ">
+            <button id="generateButton">Generate Password</button>
+        </div>
+        <div id="password-display"></div>
+        <button id="copyButton">Copy</button>
+        <audio id="background-audio" autoplay loop>
+            <source src="untitled.mp3" type="audio/mpeg">
+            
+        </audio>
+    </div>
+
+    <script>
+        // Includi qui il codice JavaScript per lo sfondo interattivo con il mouse
+        const myCanvas = document.querySelector("#myCanvas");
+        const ctx = myCanvas.getContext("2d");
+
+        let w, h, particles, cellSize, hexRadius, hexWidth, hexHeight, spacing;
+        let mouse = {
+            x: undefined,
+            y: undefined,
+            radius: 100
+        };
+
+        const customImage = new Image();
+        customImage.src = "12.png";
+
+        function init() {
+            cellSize = 80;
+            hexRadius = cellSize / 2;
+            hexWidth = Math.sqrt(3) * hexRadius;
+            hexHeight = 2 * hexRadius;
+            spacing = 20;
+            resizeReset();
+            animationLoop();
+        }
+
+        function resizeReset() {
+            w = myCanvas.width = window.innerWidth;
+            h = myCanvas.height = window.innerHeight;
+
+            particles = [];
+            for (let y = hexRadius; y < h; y += hexHeight + spacing) {
+                for (let x = hexWidth; x < w; x += 1.5 * hexWidth + spacing) {
+                    particles.push(new Particle(x, y));
+                }
+            }
+        }
+
+        function animationLoop() {
+            ctx.clearRect(0, 0, w, h);
+            drawScene();
+            requestAnimationFrame(animationLoop);
+        }
+
+        function drawScene() {
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+        }
+
+        myCanvas.addEventListener("mousemove", (e) => {
+            const rect = myCanvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        });
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = 40;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.speed = (Math.random() * 25) + 5;
+            }
+
+            draw() {
+                ctx.drawImage(customImage, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+            }
+
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let maxDistance = mouse.radius;
+                let force = (distance - maxDistance) / distance; // Inverti la direzione
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let directionX = forceDirectionX * force * this.speed;
+                let directionY = forceDirectionY * force * this.speed;
+
+                if (distance < mouse.radius) {
+                    this.x += directionX;
+                    this.y += directionY;
+                } else {
+                    if (this.x !== this.baseX) {
+                        let dx = this.x - this.baseX;
+                        this.x -= dx / 10;
+                    }
+                    if (this.y !== this.baseY) {
+                        let dy = this.y - this.baseY;
+                        this.y -= dy / 10;
+                    }
+                }
+            }
+        }
+
+        init();
+        window.addEventListener("resize", resizeReset);
+
+        // Codice JavaScript per la generazione di password
+        function generatePassword(length) {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset.charAt(randomIndex);
+            }
+            return password;
+        }
+
+        function generateAndDisplayPassword() {
+            const numPasswordsInput = document.getElementById("numPasswords");
+            const numPasswords = parseInt(numPasswordsInput.value);
+            const passwordOutput = document.getElementById("password-display");
+
+            if (numPasswords > 10) {
+                alert("Limit Max 10 password.");
+                return;
+            }
+
+            passwordOutput.innerHTML = "";
+
+            for (let i = 1; i <= numPasswords; i++) {
+                const passwordLength = Math.floor(Math.random() * (12 - 10 + 1)) + 10;
+                const password = generatePassword(passwordLength);
+                passwordOutput.innerHTML += `Password ${i}: ${password}<br>`;
+            }
+        }
+
+        document.getElementById("generateButton").addEventListener("click", generateAndDisplayPassword);
+
+        document.getElementById("copyButton").addEventListener("click", function() {
+            const passwordDisplay = document.getElementById("password-display");
+            const textArea = document.createElement("textarea");
+            textArea.value = passwordDisplay.innerText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            alert("Password copied!");
+        });
+    </script>
 </body>
 </html>
