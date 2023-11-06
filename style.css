@@ -1,69 +1,54 @@
 body {
+    background-image: url('2.jpg');
+    background-size: cover;
+    background-attachment: fixed;
     font-family: Arial, sans-serif;
-    margin: 0;
-    overflow: hidden;
+    color: #fff;
+    overflow: auto; /* Aggiungi la barra di scorrimento */
+}
+#audio-background {
+    position: absolute;
+    top: -1000px; /* Sposta l'elemento fuori dallo schermo */
 }
 
-#stars-bg {
-    position: fixed;
+#canvas-container {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
 }
 
-.star {
+#myCanvas {
+    display: block;
+}
+
+#password-container {
     position: absolute;
-    background: #fff;
-    border-radius: 50%;
-    animation: twinkle 3s infinite;
-}
-
-.container {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
-    padding: 50px;
-    position: relative;
-    z-index: 1;
 }
 
-h1 {
-    color: #fff;
+#password-display {
+    margin-bottom: 20px;
 }
 
-label {
-    color: #fff;
-}
-
-input {
+#numPasswords {
+    width: 50px;
     padding: 5px;
 }
 
-button {
+#generateButton {
+    padding: 10px 20px;
     background-color: #007BFF;
     color: #fff;
-    padding: 10px 20px;
     border: none;
     cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#passwordOutput {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    border-radius: 5px;
     margin-top: 20px;
-    z-index: 1;
 }
 
-@keyframes twinkle {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(0.8);
-    }
+#generateButton:hover {
+    background-color: #0056b3;
 }
