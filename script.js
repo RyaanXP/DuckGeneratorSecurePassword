@@ -21,3 +21,33 @@ function generateAndDisplayPassword() {
 }
 
 document.getElementById("generateButton").addEventListener("click", generateAndDisplayPassword);
+
+const starsBg = document.getElementById("stars-bg");
+const stars = [];
+
+for (let i = 0; i < 50; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.width = `${Math.random() * 2 + 1}px`;
+    star.style.height = star.style.width;
+    starsBg.appendChild(star);
+    stars.push(star);
+}
+
+starsBg.addEventListener("mousemove", (e) => {
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+
+    stars.forEach((star, index) => {
+        const starX = star.getBoundingClientRect().left + star.clientWidth / 2;
+        const starY = star.getBoundingClientRect().top + star.clientHeight / 2;
+        const deltaX = mouseX - starX;
+        const deltaY = mouseY - starY;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const moveFactor = 50;
+
+        star.style.transform = `translate(${deltaX / distance * moveFactor}px, ${deltaY / distance * moveFactor}px)`;
+    });
+});
