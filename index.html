@@ -19,14 +19,13 @@
         </div>
         <div id="password-display"></div>
         <button id="copyButton">Copy</button>
+        <div id="visitor-counter">Visitors: <span id="count">0</span></div>
         <audio id="background-audio" autoplay loop>
             <source src="untitled.mp3" type="audio/mpeg">
-            
         </audio>
     </div>
 
     <script>
-        // Includi qui il codice JavaScript per lo sfondo interattivo con il mouse
         const myCanvas = document.querySelector("#myCanvas");
         const ctx = myCanvas.getContext("2d");
 
@@ -100,7 +99,7 @@
                 let dy = mouse.y - this.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 let maxDistance = mouse.radius;
-                let force = (distance - maxDistance) / distance; // Inverti la direzione
+                let force = (distance - maxDistance) / distance;
                 let forceDirectionX = dx / distance;
                 let forceDirectionY = dy / distance;
                 let directionX = forceDirectionX * force * this.speed;
@@ -125,7 +124,6 @@
         init();
         window.addEventListener("resize", resizeReset);
 
-        // Codice JavaScript per la generazione di password
         function generatePassword(length) {
             const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
             let password = "";
@@ -167,6 +165,13 @@
             document.body.removeChild(textArea);
             alert("Password copied!");
         });
+
+        let visitorCount = localStorage.getItem('visitorCount') || 0;
+        document.getElementById("count").textContent = visitorCount;
+
+        visitorCount++;
+        localStorage.setItem('visitorCount', visitorCount);
     </script>
 </body>
+
 </html>
